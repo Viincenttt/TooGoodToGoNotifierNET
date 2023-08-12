@@ -26,6 +26,11 @@ public class TooGoodToGoApiClient : ITooGoodToGoApiClient {
             .ConfigureAwait(false);
     }
 
+    public async Task<RefreshAccessTokenResponse> RefreshAccessToken(RefreshAccessTokenRequest request) {
+        return await PostAsync<RefreshAccessTokenResponse>($"auth/v3/token/refresh", request)
+            .ConfigureAwait(false);
+    }
+
     public async Task<FavoritesItemsResponse> GetFavoritesItems(string bearerToken, FavoritesItemsRequest request) {
         return await PostAsync<FavoritesItemsResponse>($"item/v8/", request, bearerToken)
             .ConfigureAwait(false);
