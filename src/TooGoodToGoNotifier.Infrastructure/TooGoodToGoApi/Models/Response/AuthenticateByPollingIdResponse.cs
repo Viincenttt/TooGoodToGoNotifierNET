@@ -10,7 +10,7 @@ public record AuthenticateByPollingIdResponse {
     public required string RefreshToken { get; init; }
     
     [JsonProperty("access_token_ttl_seconds")]
-    public required string AccessTokenTtlSeconds { get; init; }
+    public required int AccessTokenTtlSeconds { get; init; }
     
     [JsonProperty("startup_data")]
     public required StartupDataResponse StartupData { get; init; }

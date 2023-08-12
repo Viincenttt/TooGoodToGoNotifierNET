@@ -10,5 +10,5 @@ public record RefreshAccessTokenResponse {
     public required string RefreshToken { get; init; }
     
     [JsonProperty("access_token_ttl_seconds")]
-    public required string AccessTokenTtlSeconds { get; init; }
+    public required int AccessTokenTtlSeconds { get; init; }
 }
