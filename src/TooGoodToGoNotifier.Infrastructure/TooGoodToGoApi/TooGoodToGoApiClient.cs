@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json;
 using TooGoodToGoNotifier.Infrastructure.Exceptions;
@@ -33,7 +32,7 @@ public class TooGoodToGoApiClient : ITooGoodToGoApiClient {
     }
     
     private async Task<T> SendHttpRequest<T>(HttpMethod httpMethod, string relativeUri, object? data = null, string? bearerToken = null) {
-        HttpRequestMessage httpRequest = CreateHttpRequest(httpMethod, relativeUri, bearerToken: bearerToken);
+        HttpRequestMessage httpRequest = CreateHttpRequest(httpMethod, relativeUri, data, bearerToken);
         if (data != null) {
             var jsonData = JsonConvert.SerializeObject(data);
             var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
@@ -51,22 +50,10 @@ public class TooGoodToGoApiClient : ITooGoodToGoApiClient {
             return JsonConvert.DeserializeObject<T>(resultContent)!;
         }
 
-        switch (response.StatusCode) {
-            case HttpStatusCode.BadRequest:
-            case HttpStatusCode.Unauthorized:
-            case HttpStatusCode.Forbidden:
-            case HttpStatusCode.NotFound:
-            case HttpStatusCode.MethodNotAllowed:
-            case HttpStatusCode.UnsupportedMediaType:
-            case HttpStatusCode.TooManyRequests:
-                throw new TooGoodToGoApiException(response.StatusCode, resultContent);
-            default:
-                throw new HttpRequestException(
-                    $"Unknown http exception occured with status code: {(int) response.StatusCode}.");
-        }
+        throw new TooGoodToGoApiException(response.StatusCode, resultContent);
     }
     
-    private HttpRequestMessage CreateHttpRequest(HttpMethod method, string relativeUri, HttpContent? content = null, string? bearerToken = null) {
+    private HttpRequestMessage CreateHttpRequest(HttpMethod method, string relativeUri, object? data, string? bearerToken = null) {
         HttpRequestMessage httpRequest = new HttpRequestMessage(method, new Uri(new Uri(ApiBaseUrl), relativeUri));
         httpRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         httpRequest.Headers.TryAddWithoutValidation("user-agent", "TGTG/23.7.12 Dalvik/2.1.0 (Linux; U; Android 9; AFTKA Build/PS7285.2877N");
@@ -75,7 +62,11 @@ public class TooGoodToGoApiClient : ITooGoodToGoApiClient {
         if (!string.IsNullOrEmpty(bearerToken)) {
             httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
         }
-        httpRequest.Content = content;
+        if (data != null) {
+            var jsonData = JsonConvert.SerializeObject(data);
+            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+            httpRequest.Content = content;
+        }
 
         return httpRequest;
     }
