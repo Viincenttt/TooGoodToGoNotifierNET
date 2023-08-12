@@ -12,6 +12,16 @@ public record AuthenticateByPollingIdResponse {
     [JsonProperty("access_token_ttl_seconds")]
     public required string AccessTokenTtlSeconds { get; init; }
     
-    // TODO: Nested obj
-    public required string UserId { get; init; }
+    [JsonProperty("startup_data")]
+    public required StartupDataResponse StartupData { get; init; }
+    
+    public record StartupDataResponse {
+        [JsonProperty("user")]
+        public required UserResponse User { get; set; }
+    }
+    
+    public record UserResponse {
+        [JsonProperty("user_id")]
+        public required string UserId { get; set; }
+    }
 }

@@ -11,8 +11,29 @@ builder.ConfigureServices(services =>
 IHost host = builder.Build();
 
 var client = host.Services.GetRequiredService<ITooGoodToGoApiClient>();
-var result = await client.AuthenticateByEmail(new AuthenticateByEmailRequest {
-    Email = "vincentkok@live.nl"
+const string emailAddress = "";
+var authenticateByEmailResult = await client.AuthenticateByEmail(new AuthenticateByEmailRequest {
+    Email = emailAddress
 });
+
+await Task.Delay(TimeSpan.FromSeconds(10));
+
+while (true) {
+    var authenticateByPollingIdResult = await client.AuthenticateByPollingId(new AuthenticateByPollingIdRequest {
+        Email = emailAddress,
+        RequestPollingId = authenticateByEmailResult.PollingId
+    });
+
+    if (authenticateByPollingIdResult != null) {
+        var favorites = await client.GetFavoritesItems(
+            bearerToken: authenticateByPollingIdResult.AccessToken, 
+            request: new FavoritesItemsRequest {
+                UserId = authenticateByPollingIdResult.StartupData.User.UserId
+            }
+        );
+    }
+
+    await Task.Delay(TimeSpan.FromSeconds(10));
+}
 
 host.Run();

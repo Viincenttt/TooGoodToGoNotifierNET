@@ -18,25 +18,30 @@ public class TooGoodToGoApiClient : ITooGoodToGoApiClient {
     }
 
     public async Task<AuthenticateByEmailResponse> AuthenticateByEmail(AuthenticateByEmailRequest request) {
-        return await this.PostAsync<AuthenticateByEmailResponse>($"auth/v3/authByEmail", request)
+        return await PostAsync<AuthenticateByEmailResponse>($"auth/v3/authByEmail", request)
             .ConfigureAwait(false);
     }
 
-    public async Task<AuthenticateByPollingIdResponse> AuthenticateByPollingId(AuthenticateByPollingIdRequest request) {
-        return await this.PostAsync<AuthenticateByPollingIdResponse>($"auth/v3/authByRequestPollingId", request)
+    public async Task<AuthenticateByPollingIdResponse?> AuthenticateByPollingId(AuthenticateByPollingIdRequest request) {
+        return await PostAsync<AuthenticateByPollingIdResponse?>($"auth/v3/authByRequestPollingId", request)
+            .ConfigureAwait(false);
+    }
+
+    public async Task<FavoritesItemsResponse> GetFavoritesItems(string bearerToken, FavoritesItemsRequest request) {
+        return await PostAsync<FavoritesItemsResponse>($"item/v8/", request, bearerToken)
             .ConfigureAwait(false);
     }
     
-    private async Task<T> SendHttpRequest<T>(HttpMethod httpMethod, string relativeUri, object? data = null) {
-        HttpRequestMessage httpRequest = this.CreateHttpRequest(httpMethod, relativeUri);
+    private async Task<T> SendHttpRequest<T>(HttpMethod httpMethod, string relativeUri, object? data = null, string? bearerToken = null) {
+        HttpRequestMessage httpRequest = CreateHttpRequest(httpMethod, relativeUri, bearerToken: bearerToken);
         if (data != null) {
             var jsonData = JsonConvert.SerializeObject(data);
             var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
             httpRequest.Content = content;
         }
 
-        var response = await this._httpClient.SendAsync(httpRequest).ConfigureAwait(false);
-        return await this.ProcessHttpResponseMessage<T>(response).ConfigureAwait(false);
+        var response = await _httpClient.SendAsync(httpRequest).ConfigureAwait(false);
+        return await ProcessHttpResponseMessage<T>(response).ConfigureAwait(false);
     }
     
     private async Task<T> ProcessHttpResponseMessage<T>(HttpResponseMessage response) {
@@ -61,22 +66,21 @@ public class TooGoodToGoApiClient : ITooGoodToGoApiClient {
         }
     }
     
-    private HttpRequestMessage CreateHttpRequest(HttpMethod method, string relativeUri, HttpContent? content = null) {
+    private HttpRequestMessage CreateHttpRequest(HttpMethod method, string relativeUri, HttpContent? content = null, string? bearerToken = null) {
         HttpRequestMessage httpRequest = new HttpRequestMessage(method, new Uri(new Uri(ApiBaseUrl), relativeUri));
         httpRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         httpRequest.Headers.TryAddWithoutValidation("user-agent", "TGTG/23.7.12 Dalvik/2.1.0 (Linux; U; Android 9; AFTKA Build/PS7285.2877N");
         httpRequest.Headers.Add("accept-language", "en-UK");
         httpRequest.Headers.Add("accept", "application/json");
+        if (!string.IsNullOrEmpty(bearerToken)) {
+            httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+        }
         httpRequest.Content = content;
 
         return httpRequest;
     }
     
-    private async Task<T> PostAsync<T>(string relativeUri, object data) {
-        return await this.SendHttpRequest<T>(HttpMethod.Post, relativeUri, data).ConfigureAwait(false);
-    }
-    
-    protected async Task<T> GetAsync<T>(string relativeUri) {
-        return await this.SendHttpRequest<T>(HttpMethod.Get, relativeUri).ConfigureAwait(false);
+    private async Task<T> PostAsync<T>(string relativeUri, object data, string? bearerToken = null) {
+        return await SendHttpRequest<T>(HttpMethod.Post, relativeUri, data, bearerToken).ConfigureAwait(false);
     }
 }

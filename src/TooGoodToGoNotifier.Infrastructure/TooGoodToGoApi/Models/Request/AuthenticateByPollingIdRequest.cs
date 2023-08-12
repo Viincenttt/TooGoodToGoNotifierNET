@@ -4,7 +4,7 @@ namespace TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi.Models.Request;
 
 public record AuthenticateByPollingIdRequest {
     [JsonProperty("device_type")]
-    public required string DeviceType { get; init; } = "ANDROID";
+    public string DeviceType { get; init; } = "ANDROID";
     
     [JsonProperty("email")]
     public required string Email { get; init; }
