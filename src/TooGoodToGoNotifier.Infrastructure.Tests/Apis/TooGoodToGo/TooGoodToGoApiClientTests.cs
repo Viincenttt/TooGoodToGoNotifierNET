@@ -6,7 +6,7 @@ using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Response;
 using TooGoodToGoNotifier.Domain.Exceptions;
 using TooGoodToGoNotifier.Infrastructure.Apis.TooGoodToGoApi;
 
-namespace TooGoodToGoNotifier.Infrastructure.Tests;
+namespace TooGoodToGoNotifier.Infrastructure.Tests.Apis.TooGoodToGo;
 
 public class TooGoodToGoApiClientTests {
     private const string ApiBaseUrl = "https://apptoogoodtogo.com/api/";
