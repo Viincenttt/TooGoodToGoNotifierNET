@@ -9,7 +9,8 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddUserSecrets(Assembly.GetExecutingAssembly());
+    .AddUserSecrets(Assembly.GetExecutingAssembly())
+    .AddEnvironmentVariables();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
