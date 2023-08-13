@@ -7,7 +7,7 @@ public class TelegramApiException : Exception {
     public string? JsonResponse { get; init; }
     
     public TelegramApiException(HttpStatusCode statusCode, string jsonResponse) 
-        : base ("Error while sending request to TelegramApi") {
+        : base ($"Error while sending request to TelegramApi StatusCode={statusCode} Json={jsonResponse}") {
 
         StatusCode = statusCode;
         JsonResponse = jsonResponse;

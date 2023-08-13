@@ -25,14 +25,14 @@ public class TooGoodToGoAuthenticator {
         _logger = logger;
     }
 
-    public async Task<AuthenticationDto> Authenticate(string email) {
+    public async Task<AuthenticationDto> Authenticate(CancellationToken cancellationToken, string email) {
         AuthenticationDto? authenticationDto = await _authenticationCache.Get();
         if (authenticationDto != null) {
             authenticationDto = await RefreshTokenIfExpired(authenticationDto);
             return authenticationDto;
         }
 
-        authenticationDto = await RetrieveNewAuthenticationResult(email);
+        authenticationDto = await RetrieveNewAuthenticationResult(cancellationToken, email);
         await _authenticationCache.Persist(authenticationDto);
         return authenticationDto;
     }
@@ -66,9 +66,9 @@ public class TooGoodToGoAuthenticator {
         };
     }
 
-    private async Task<AuthenticationDto> RetrieveNewAuthenticationResult(string email) {
+    private async Task<AuthenticationDto> RetrieveNewAuthenticationResult(CancellationToken cancellationToken, string email) {
         string pollingId = await AuthenticateByEmail(email);
-        return await PollForAuthenticationResult(email, pollingId);
+        return await PollForAuthenticationResult(cancellationToken, email, pollingId);
     }
 
     private async Task<string> AuthenticateByEmail(string email) {
@@ -79,8 +79,10 @@ public class TooGoodToGoAuthenticator {
         return response.PollingId;
     }
 
-    private async Task<AuthenticationDto> PollForAuthenticationResult(string email, string pollingId) {
+    private async Task<AuthenticationDto> PollForAuthenticationResult(CancellationToken cancellationToken, string email, string pollingId) {
         while (true) {
+            cancellationToken.ThrowIfCancellationRequested();
+            
             var request = new AuthenticateByPollingIdRequest {
                 Email = email,
                 RequestPollingId = pollingId

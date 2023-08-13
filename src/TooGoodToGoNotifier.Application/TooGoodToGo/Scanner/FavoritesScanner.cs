@@ -28,8 +28,8 @@ public class FavoritesScanner {
         _logger = logger;
     }
     
-    public async Task ScanFavorites(string email) {
-        AuthenticationDto authentication = await _tooGoodToGoAuthenticator.Authenticate(email);
+    public async Task ScanFavorites(CancellationToken cancellationToken, string email) {
+        AuthenticationDto authentication = await _tooGoodToGoAuthenticator.Authenticate(cancellationToken, email);
         Dictionary<string, FavoriteItemDto> previousFavorites = await _favoriteItemsCache.Get();
         Dictionary<string, FavoriteItemDto> newFavorites = await GetFavoritesFromApi(authentication);
 

@@ -24,14 +24,18 @@ public class TimedFavoritesScanner : BackgroundService {
     }
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken) {
+        _logger.LogInformation("Started scanning continuously for email={email}", 
+            _options.Email);
+        
         while (!cancellationToken.IsCancellationRequested) {
             _logger.LogInformation("Starting scanning for favorites");
 
             try {
-                await _favoritesScanner.ScanFavorites(_options.Email);
+                await _favoritesScanner.ScanFavorites(cancellationToken, _options.Email);
             }
             catch (Exception e) {
-                _logger.LogError("Error while scanning favorites. Retrying in {timeBetweenScanning} seconds",
+                _logger.LogError("Error while scanning favorites Error={error}. Retrying in {timeBetweenScanning} seconds",
+                    e.Message,
                     _timeBetweenScanning.TotalSeconds);
             }
 

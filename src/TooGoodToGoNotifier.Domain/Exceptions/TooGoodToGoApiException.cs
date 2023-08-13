@@ -7,7 +7,7 @@ public class TooGoodToGoApiException : Exception {
     public string? JsonResponse { get; init; }
     
     public TooGoodToGoApiException(HttpStatusCode statusCode, string jsonResponse) 
-        : base ("Error while sending request to TooGoodToApi") {
+        : base ($"Error while sending request to TooGoodToApi StatusCode={statusCode} Json={jsonResponse}") {
 
         StatusCode = statusCode;
         JsonResponse = jsonResponse;
