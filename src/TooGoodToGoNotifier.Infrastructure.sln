@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TooGoodToGoNotifier.Applica
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{639DEC3B-33F2-4E1F-8EF5-DAC8FEBCC236}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TooGoodToGoNotifier.Presentation.FunctionApp", "TooGoodToGoNotifier.Presentation.FunctionApp\TooGoodToGoNotifier.Presentation.FunctionApp.csproj", "{77D9CF22-9234-4E47-95F7-CACA2D990336}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{9A23F198-EF64-42DF-961F-6397AF041B63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A23F198-EF64-42DF-961F-6397AF041B63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A23F198-EF64-42DF-961F-6397AF041B63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77D9CF22-9234-4E47-95F7-CACA2D990336}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77D9CF22-9234-4E47-95F7-CACA2D990336}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77D9CF22-9234-4E47-95F7-CACA2D990336}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77D9CF22-9234-4E47-95F7-CACA2D990336}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D9CDA27D-6DA5-4CDB-B3CC-B57CDA5831D8} = {639DEC3B-33F2-4E1F-8EF5-DAC8FEBCC236}
