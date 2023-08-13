@@ -32,13 +32,13 @@ public class TooGoodToGoApiClient : ITooGoodToGoApiClient {
             .ConfigureAwait(false);
     }
 
-    public async Task<FavoritesItemsResponse> GetFavoritesItems(string bearerToken, FavoritesItemsRequest request) {
-        return await PostAsync<FavoritesItemsResponse>($"item/v8/", request, bearerToken)
+    public async Task<FavoritesItemsResponse> GetFavoritesItems(string accessToken, FavoritesItemsRequest request) {
+        return await PostAsync<FavoritesItemsResponse>($"item/v8/", request, accessToken)
             .ConfigureAwait(false);
     }
     
-    private async Task<T> SendHttpRequest<T>(HttpMethod httpMethod, string relativeUri, object? data = null, string? bearerToken = null) {
-        HttpRequestMessage httpRequest = CreateHttpRequest(httpMethod, relativeUri, data, bearerToken);
+    private async Task<T> SendHttpRequest<T>(HttpMethod httpMethod, string relativeUri, object? data = null, string? accessToken = null) {
+        HttpRequestMessage httpRequest = CreateHttpRequest(httpMethod, relativeUri, data, accessToken);
         if (data != null) {
             var jsonData = JsonConvert.SerializeObject(data);
             var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
@@ -59,14 +59,13 @@ public class TooGoodToGoApiClient : ITooGoodToGoApiClient {
         throw new TooGoodToGoApiException(response.StatusCode, resultContent);
     }
     
-    private HttpRequestMessage CreateHttpRequest(HttpMethod method, string relativeUri, object? data, string? bearerToken = null) {
+    private HttpRequestMessage CreateHttpRequest(HttpMethod method, string relativeUri, object? data, string? accessToken = null) {
         HttpRequestMessage httpRequest = new HttpRequestMessage(method, new Uri(new Uri(ApiBaseUrl), relativeUri));
         httpRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         httpRequest.Headers.TryAddWithoutValidation("user-agent", "TGTG/23.7.12 Dalvik/2.1.0 (Linux; U; Android 9; AFTKA Build/PS7285.2877N");
         httpRequest.Headers.Add("accept-language", "en-UK");
-        //httpRequest.Headers.Add("accept", "application/json");
-        if (!string.IsNullOrEmpty(bearerToken)) {
-            httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+        if (!string.IsNullOrEmpty(accessToken)) {
+            httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         }
         if (data != null) {
             var jsonData = JsonConvert.SerializeObject(data);
@@ -77,7 +76,7 @@ public class TooGoodToGoApiClient : ITooGoodToGoApiClient {
         return httpRequest;
     }
     
-    private async Task<T> PostAsync<T>(string relativeUri, object data, string? bearerToken = null) {
-        return await SendHttpRequest<T>(HttpMethod.Post, relativeUri, data, bearerToken).ConfigureAwait(false);
+    private async Task<T> PostAsync<T>(string relativeUri, object data, string? accessToken = null) {
+        return await SendHttpRequest<T>(HttpMethod.Post, relativeUri, data, accessToken).ConfigureAwait(false);
     }
 }

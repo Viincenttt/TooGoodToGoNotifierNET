@@ -22,7 +22,7 @@ public class TelegramApiClient : ITelegramApiClient {
 
     public async Task<SendMessageResponse> SendMessage(SendMessageRequest request) {
         string relativeUri = $"bot{Uri.EscapeDataString(_options.BotToken)}/" +
-                             $"sendMessage?chat_id={request.ChatId}&" +
+                             $"sendMessage?chat_id={_options.ChatId}&" +
                              $"text={Uri.EscapeDataString(request.Message)}";
         
         return await GetAsync<SendMessageResponse>(relativeUri)

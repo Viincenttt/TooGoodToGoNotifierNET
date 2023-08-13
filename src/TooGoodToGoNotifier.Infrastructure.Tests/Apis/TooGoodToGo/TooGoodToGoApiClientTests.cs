@@ -108,9 +108,10 @@ public class TooGoodToGoApiClientTests {
     public async Task Get_favorites_items_request_response_matches() {
         // Arrange
         const string myBearerToken = "my-bearer-token";
+        const string itemId = "my-item-id";
         const string displayName = "my-favorite-store";
         const int itemsAvailable = 11;
-        string jsonResponse = CreateFavoritesItemsResponse(displayName, itemsAvailable);
+        string jsonResponse = CreateFavoritesItemsResponse(itemId, displayName, itemsAvailable);
         string expectedUrl = $"{ApiBaseUrl}item/v8/";
         var mockHttp = CreateMockHttpMessageHandler(HttpMethod.Post, expectedUrl, jsonResponse);
         HttpClient httpClient = mockHttp.ToHttpClient();
@@ -126,6 +127,7 @@ public class TooGoodToGoApiClientTests {
         response.Should().NotBeNull();
         response.Items.Should().HaveCount(1);
         FavoritesItemsResponse.ItemResponse item = response.Items.First();
+        item.Item.ItemId.Should().Be(itemId);
         item.DisplayName.Should().Be(displayName);
         item.ItemsAvailable.Should().Be(itemsAvailable);
     }
@@ -180,10 +182,13 @@ public class TooGoodToGoApiClientTests {
         }}";
     }
 
-    private string CreateFavoritesItemsResponse(string displayName, int itemsAvailable) {
+    private string CreateFavoritesItemsResponse(string itemId, string displayName, int itemsAvailable) {
         return @$"{{
             ""items"": [
                 {{
+                    ""item"": {{
+                        ""item_id"": ""{itemId}""
+                    }},                    
                     ""display_name"": ""{displayName}"",
                     ""items_available"": {itemsAvailable},
                 }}                

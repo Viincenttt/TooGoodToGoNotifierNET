@@ -17,7 +17,7 @@ public class TelegramApiClientTests {
         const string message = "this is my telegram message";
         const string chatId = "-12345";
         const string botToken = "my-bot-token";
-        var options = CreateOptions(botToken);
+        var options = CreateOptions(botToken, chatId);
         string expectedUrl = $"{ApiBaseUrl}bot{Uri.EscapeDataString(botToken)}/" +
                              $"sendMessage?chat_id={chatId}&" +
                              $"text={Uri.EscapeDataString(message)}";
@@ -28,7 +28,6 @@ public class TelegramApiClientTests {
 
         // Act
         SendMessageResponse response = await telegramClient.SendMessage(new SendMessageRequest {
-            ChatId = chatId,
             Message = message
         });
 
@@ -43,9 +42,10 @@ public class TelegramApiClientTests {
         }}"; 
     }
 
-    private IOptions<TelegramApiConfiguration> CreateOptions(string botToken) {
+    private IOptions<TelegramApiConfiguration> CreateOptions(string botToken, string chatId) {
         return Options.Create(new TelegramApiConfiguration {
-            BotToken = botToken
+            BotToken = botToken,
+            ChatId = chatId
         });
     }
 

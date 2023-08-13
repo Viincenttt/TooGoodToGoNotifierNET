@@ -20,16 +20,16 @@ public class TooGoodToGoAuthenticator {
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public async Task<string> GetAccessToken(string email) {
+    public async Task<AuthenticationDto> Authenticate(string email) {
         AuthenticationDto? authenticationDto = await _authenticationCache.Get();
         if (authenticationDto != null) {
             authenticationDto = await RefreshTokenIfExpired(authenticationDto);
-            return authenticationDto.AccessToken;
+            return authenticationDto;
         }
 
         authenticationDto = await RetrieveNewAuthenticationResult(email);
         await _authenticationCache.Persist(authenticationDto);
-        return authenticationDto.AccessToken;
+        return authenticationDto;
     }
 
     private async Task<AuthenticationDto> RefreshTokenIfExpired(AuthenticationDto authenticationDto) {
