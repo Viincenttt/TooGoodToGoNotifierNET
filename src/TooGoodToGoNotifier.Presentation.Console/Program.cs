@@ -1,18 +1,19 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TooGoodToGoNotifier.Application;
 using TooGoodToGoNotifier.Application.Common.Interfaces;
 using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Request;
-using TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi;
+using TooGoodToGoNotifier.Infrastructure;
 
-var builder = Host.CreateDefaultBuilder(args);
+var builder = Host.CreateApplicationBuilder(args);
 
-builder.ConfigureServices(services =>
-    services.AddHttpClient<ITooGoodToGoApiClient, TooGoodToGoApiClient>());
+builder.Services.AddInfrastructureServices();
+builder.Services.AddApplicationServices();
 
 IHost host = builder.Build();
 
 var client = host.Services.GetRequiredService<ITooGoodToGoApiClient>();
-const string emailAddress = "vincentkok@live.nl";
+const string emailAddress = "";
 var authenticateByEmailResult = await client.AuthenticateByEmail(new AuthenticateByEmailRequest {
     Email = emailAddress
 });
