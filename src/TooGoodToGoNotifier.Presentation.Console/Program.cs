@@ -13,6 +13,7 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddInMemoryAuthenticationCache();
 builder.Services.AddApplicationServices();
 builder.Services.AddConsoleServices(builder.Configuration);
 

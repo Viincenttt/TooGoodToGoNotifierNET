@@ -11,7 +11,6 @@ namespace TooGoodToGoNotifier.Application;
 public static class DependencyInjection
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services) {
-        services.AddTransient<IAuthenticationCache, InMemoryAuthenticationCache>();
         services.AddTransient<TooGoodToGoAuthenticator>();
 
         services.AddTransient<IFavoriteItemsCache, InMemoryFavoriteItemsCache>();
@@ -19,6 +18,18 @@ public static class DependencyInjection
         
         services.Add(new ServiceDescriptor(typeof(INotifier), typeof(TelegramNotifier), ServiceLifetime.Transient));
         
+        return services;
+    }
+
+    public static IServiceCollection AddInMemoryAuthenticationCache(this IServiceCollection services) {
+        services.AddTransient<IAuthenticationCache, InMemoryAuthenticationCache>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddSecretManagerAuthenticationCache(this IServiceCollection services) {
+        services.AddTransient<IAuthenticationCache, SecretsManagerAuthenticationCache>();
+
         return services;
     }
 }
