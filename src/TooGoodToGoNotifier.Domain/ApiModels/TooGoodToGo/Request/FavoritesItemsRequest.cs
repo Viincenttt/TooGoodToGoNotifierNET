@@ -1,13 +1,13 @@
 ﻿using Newtonsoft.Json;
 
-namespace TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi.Models.Request; 
+namespace TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Request; 
 
 public record FavoritesItemsRequest {
     [JsonProperty("user_id")]
     public required string UserId { get; init; }
 
     [JsonProperty("origin")] 
-    public GpsCoordinates Origin { get; init; } = new GpsCoordinates();
+    public GpsCoordinatesRequest Origin { get; init; } = new GpsCoordinatesRequest();
 
     [JsonProperty("radius")]
     public int Radius { get; init; } = 1;
@@ -47,4 +47,12 @@ public record FavoritesItemsRequest {
     
     [JsonProperty("we_care_only")] 
     public bool WeCareOnly { get; init; } = false;
+    
+    public record GpsCoordinatesRequest {
+        [JsonProperty("longitude")]
+        public decimal Longitude { get; init; } = 0.0m;
+    
+        [JsonProperty("latitude")]
+        public decimal Latitude { get; init; } = 0.0m;
+    }
 }

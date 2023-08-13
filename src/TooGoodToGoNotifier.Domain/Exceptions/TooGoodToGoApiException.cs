@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace TooGoodToGoNotifier.Infrastructure.Exceptions; 
+namespace TooGoodToGoNotifier.Domain.Exceptions; 
 
 public class TooGoodToGoApiException : Exception {
     public HttpStatusCode? StatusCode { get; init; }

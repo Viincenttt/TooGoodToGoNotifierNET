@@ -1,7 +1,7 @@
-using TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi.Models.Request;
-using TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi.Models.Response;
+using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Request;
+using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Response;
 
-namespace TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi;
+namespace TooGoodToGoNotifier.Application.Common.Interfaces;
 
 public interface ITooGoodToGoApiClient {
     Task<AuthenticateByEmailResponse> AuthenticateByEmail(AuthenticateByEmailRequest request);

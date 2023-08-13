@@ -1,9 +1,10 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json;
-using TooGoodToGoNotifier.Infrastructure.Exceptions;
-using TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi.Models.Request;
-using TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi.Models.Response;
+using TooGoodToGoNotifier.Application.Common.Interfaces;
+using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Request;
+using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Response;
+using TooGoodToGoNotifier.Domain.Exceptions;
 
 namespace TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi;
 

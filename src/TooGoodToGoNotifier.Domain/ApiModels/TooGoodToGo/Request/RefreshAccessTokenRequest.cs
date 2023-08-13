@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi.Models.Request; 
+namespace TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Request; 
 
 public record RefreshAccessTokenRequest {
     [JsonProperty("refresh_token")]

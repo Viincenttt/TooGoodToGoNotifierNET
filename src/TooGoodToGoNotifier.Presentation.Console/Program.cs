@@ -1,7 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TooGoodToGoNotifier.Application.Common.Interfaces;
+using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Request;
 using TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi;
-using TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi.Models.Request;
 
 var builder = Host.CreateDefaultBuilder(args);
 
@@ -11,7 +12,7 @@ builder.ConfigureServices(services =>
 IHost host = builder.Build();
 
 var client = host.Services.GetRequiredService<ITooGoodToGoApiClient>();
-const string emailAddress = "";
+const string emailAddress = "vincentkok@live.nl";
 var authenticateByEmailResult = await client.AuthenticateByEmail(new AuthenticateByEmailRequest {
     Email = emailAddress
 });
@@ -25,12 +26,17 @@ while (true) {
     });
 
     if (authenticateByPollingIdResult != null) {
+        var accessTokenResponse = await client.RefreshAccessToken(new RefreshAccessTokenRequest {
+            RefreshToken = authenticateByPollingIdResult.RefreshToken
+        });
+
+        /*
         var favorites = await client.GetFavoritesItems(
             bearerToken: authenticateByPollingIdResult.AccessToken, 
             request: new FavoritesItemsRequest {
                 UserId = authenticateByPollingIdResult.StartupData.User.UserId
             }
-        );
+        );*/
     }
 
     await Task.Delay(TimeSpan.FromSeconds(10));

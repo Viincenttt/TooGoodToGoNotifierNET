@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi.Models.Response;
+namespace TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Response;
 
 public record FavoritesItemsResponse {
     [JsonProperty("items")]
