@@ -6,7 +6,7 @@ using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Request;
 using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Response;
 using TooGoodToGoNotifier.Domain.Exceptions;
 
-namespace TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi;
+namespace TooGoodToGoNotifier.Infrastructure.Apis.TooGoodToGoApi;
 
 public class TooGoodToGoApiClient : ITooGoodToGoApiClient {
     private const string ApiBaseUrl = "https://apptoogoodtogo.com/api/";
@@ -64,7 +64,7 @@ public class TooGoodToGoApiClient : ITooGoodToGoApiClient {
         httpRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         httpRequest.Headers.TryAddWithoutValidation("user-agent", "TGTG/23.7.12 Dalvik/2.1.0 (Linux; U; Android 9; AFTKA Build/PS7285.2877N");
         httpRequest.Headers.Add("accept-language", "en-UK");
-        httpRequest.Headers.Add("accept", "application/json");
+        //httpRequest.Headers.Add("accept", "application/json");
         if (!string.IsNullOrEmpty(bearerToken)) {
             httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
         }

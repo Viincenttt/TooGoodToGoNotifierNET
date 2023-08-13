@@ -7,6 +7,7 @@
         <Nullable>enable</Nullable>
         <AssemblyName>TooGoodToGoNotifier.Presentation.Console</AssemblyName>
         <RootNamespace>TooGoodToGoNotifier.Presentation.Console</RootNamespace>
+        <UserSecretsId>2a651a85-84bf-49cb-9026-d8f5c621383f</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>

@@ -4,7 +4,7 @@ using RichardSzalay.MockHttp;
 using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Request;
 using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Response;
 using TooGoodToGoNotifier.Domain.Exceptions;
-using TooGoodToGoNotifier.Infrastructure.TooGoodToGoApi;
+using TooGoodToGoNotifier.Infrastructure.Apis.TooGoodToGoApi;
 
 namespace TooGoodToGoNotifier.Infrastructure.Tests;
 
