@@ -2,6 +2,7 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Hosting;
 using TooGoodToGoNotifier.Application;
 using TooGoodToGoNotifier.Infrastructure;
+using TooGoodToGoNotifier.Presentation.Function;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
@@ -10,11 +11,7 @@ var host = new HostBuilder()
         services.AddInfrastructureServices(hostContext.Configuration);
         services.AddSecretManagerAuthenticationCache();
         services.AddApplicationServices();
-        
-        services.AddAzureClients(clientBuilder => {
-            string keyVaultUri = Environment.GetEnvironmentVariable("KeyvaultUri")!;
-            clientBuilder.AddSecretClient(new Uri(keyVaultUri));
-        });
+        services.AddFunctionAppServices(hostContext.Configuration);
     })
     .Build();
 

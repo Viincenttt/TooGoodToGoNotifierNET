@@ -31,7 +31,7 @@ public class TimedFavoritesScanner : BackgroundService {
             _logger.LogInformation("Starting scanning for favorites");
 
             try {
-                await _favoritesScanner.ScanFavorites(cancellationToken, _options.Email);
+                await _favoritesScanner.ScanFavorites(_options.Email, cancellationToken);
             }
             catch (Exception e) {
                 _logger.LogError("Error while scanning favorites Error={error}. Retrying in {timeBetweenScanning} seconds",
