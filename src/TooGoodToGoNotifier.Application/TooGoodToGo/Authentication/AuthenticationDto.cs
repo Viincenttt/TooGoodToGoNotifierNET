@@ -7,5 +7,5 @@ public class AuthenticationDto {
     public required int AccessTokenTtlSeconds { get; set; }
     public DateTime CreatedOnUtc { get; set; }
     
-    public DateTime ValidUntilUtc => CreatedOnUtc + TimeSpan.FromSeconds(30);
+    public DateTime ValidUntilUtc => CreatedOnUtc + TimeSpan.FromSeconds(AccessTokenTtlSeconds);
 }
