@@ -3,9 +3,9 @@
 namespace TooGoodToGoNotifier.Application.TooGoodToGo.Authentication.Cache; 
 
 public class SecretsManagerAuthenticationCache : IAuthenticationCache {
-    private const string UserIdSecretName = "TooGoodToGo__UserId";
-    private const string AccessTokenSecretName = "TooGoodToGo__AccessToken";
-    private const string RefreshTokenSecretName = "TooGoodToGo__RefreshToken";
+    private const string UserIdSecretName = "Tgtg--UserId";
+    private const string AccessTokenSecretName = "Tgtg--AccessToken";
+    private const string RefreshTokenSecretName = "Tgtg--RefreshToken";
     
     private readonly ISecretsManager _secretsManager;
 
@@ -23,7 +23,8 @@ public class SecretsManagerAuthenticationCache : IAuthenticationCache {
                 UserId = userIdSecret.Value,
                 AccessToken = accessTokenSecret.Value,
                 RefreshToken = refreshTokenSecret.Value,
-                AccessTokenTtlSeconds = (int)accessTokenTtlSeconds
+                AccessTokenTtlSeconds = (int)accessTokenTtlSeconds,
+                CreatedOnUtc = accessTokenSecret.CreatedOn!.Value
             };
 
             return authenticationDto;

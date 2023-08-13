@@ -18,7 +18,7 @@ public class KeyVaultSecretManager : ISecretsManager {
     public async Task<SecretDto?> GetSecret(string name) {
         try {
             var secret = await _secretClient.GetSecretAsync(name);
-            bool isValid = secret.Value.Properties.ExpiresOn > _dateTimeProvider.UtcNow();
+            bool isValid = !secret.Value.Properties.ExpiresOn.HasValue || secret.Value.Properties.ExpiresOn > _dateTimeProvider.UtcNow();
             if (isValid) {
                 return new SecretDto {
                     Name = name,
@@ -48,6 +48,17 @@ public class KeyVaultSecretManager : ISecretsManager {
     }
 
     public async Task RemoveSecret(string name) {
-        await _secretClient.StartDeleteSecretAsync(name);
+        // We don't actually remove the secrets, because some keyvault have soft-delete / purge protection enabled
+        // Therefore, we just update the expires on, so the secret is invalidated.
+        try {
+            var secret = await _secretClient.GetSecretAsync(name);
+            secret.Value.Properties.ExpiresOn = _dateTimeProvider.UtcNow();
+            await _secretClient.UpdateSecretPropertiesAsync(secret.Value.Properties);
+        }
+        catch (RequestFailedException e) {
+            if (e.Status != (int)HttpStatusCode.NotFound) {
+                throw;
+            }
+        }
     }
 }
