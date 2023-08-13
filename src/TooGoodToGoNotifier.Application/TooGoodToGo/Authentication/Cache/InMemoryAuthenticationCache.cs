@@ -1,4 +1,6 @@
-﻿namespace TooGoodToGoNotifier.Application.TooGoodToGo.Authentication.Cache; 
+﻿using TooGoodToGoNotifier.Application.Common.Interfaces;
+
+namespace TooGoodToGoNotifier.Application.TooGoodToGo.Authentication.Cache; 
 
 public class InMemoryAuthenticationCache : IAuthenticationCache {
     private AuthenticationDto? _cachedAuthentication = null;

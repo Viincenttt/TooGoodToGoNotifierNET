@@ -1,13 +1,20 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 
 namespace TooGoodToGoNotifier.Presentation.FunctionApp.Functions; 
 
-public static class FavoritesScannerFunction {
+public class FavoritesScannerFunction {
+    private readonly SecretClient _secretClient;
+
+    public FavoritesScannerFunction(SecretClient secretClient) {
+        _secretClient = secretClient;
+    }
+
     [FunctionName("FavoritesScanner")]
-    public static async Task RunAsync([TimerTrigger("*/1 * * * *")] TimerInfo myTimer, ILogger log) {
-        log.LogInformation($"C# Timer trigger function executed at: {DateTime.UtcNow}");
+    public async Task RunAsync([TimerTrigger("*/1 * * * *")] TimerInfo myTimer, ILogger log) {
+        var secret = _secretClient.GetSecret("mysecret");
+        log.LogInformation("Retrieved secret from keyvault: {secret}", secret.Value.Value);
     }
 }
