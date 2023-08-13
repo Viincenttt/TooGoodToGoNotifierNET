@@ -1,4 +1,5 @@
-﻿using TooGoodToGoNotifier.Application.Common.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using TooGoodToGoNotifier.Application.Common.Interfaces;
 using TooGoodToGoNotifier.Application.TooGoodToGo.Authentication;
 using TooGoodToGoNotifier.Application.TooGoodToGo.Scanner.Cache;
 using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Request;
@@ -11,17 +12,20 @@ public class FavoritesScanner {
     private readonly ITooGoodToGoApiClient _tooGoodToGoApiClient;
     private readonly IFavoriteItemsCache _favoriteItemsCache;
     private readonly IEnumerable<INotifier> _notifiers;
+    private readonly ILogger<FavoritesScanner> _logger;
 
     public FavoritesScanner(
         TooGoodToGoAuthenticator tooGoodToGoAuthenticator, 
         ITooGoodToGoApiClient tooGoodToGoApiClient, 
         IFavoriteItemsCache favoriteItemsCache, 
-        IEnumerable<INotifier> notifiers) {
+        IEnumerable<INotifier> notifiers, 
+        ILogger<FavoritesScanner> logger) {
         
         _tooGoodToGoAuthenticator = tooGoodToGoAuthenticator;
         _tooGoodToGoApiClient = tooGoodToGoApiClient;
         _favoriteItemsCache = favoriteItemsCache;
         _notifiers = notifiers;
+        _logger = logger;
     }
     
     public async Task ScanFavorites(string email) {
@@ -42,12 +46,16 @@ public class FavoritesScanner {
     }
 
     private async Task NotifyNewAvailability(FavoriteItemDto favoriteItem) {
+        _logger.LogInformation("Found new availability for Store={store} NumberOfAvailableItems={number}",
+            favoriteItem.DisplayName, favoriteItem.ItemsAvailable);
+        
         foreach (INotifier notifier in _notifiers) {
             try {
                 await notifier.Notify(favoriteItem);
             }
             catch (Exception e) {
-                // TODO: Log error
+                _logger.LogError(e, "Error while sending a notification Notifier={notifierClassName}", 
+                    notifier.GetType().FullName);
             }
         }
     }

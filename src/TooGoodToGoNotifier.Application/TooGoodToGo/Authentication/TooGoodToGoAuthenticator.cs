@@ -1,7 +1,9 @@
-﻿using TooGoodToGoNotifier.Application.Common.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using TooGoodToGoNotifier.Application.Common.Interfaces;
 using TooGoodToGoNotifier.Application.TooGoodToGo.Authentication.Cache;
 using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Request;
 using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Response;
+using TooGoodToGoNotifier.Domain.Exceptions;
 
 namespace TooGoodToGoNotifier.Application.TooGoodToGo.Authentication; 
 
@@ -9,15 +11,18 @@ public class TooGoodToGoAuthenticator {
     private readonly ITooGoodToGoApiClient _tooGoodToGoApiClient;
     private readonly IAuthenticationCache _authenticationCache;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly ILogger<TooGoodToGoAuthenticator> _logger;
 
     public TooGoodToGoAuthenticator(
         ITooGoodToGoApiClient tooGoodToGoApiClient, 
         IAuthenticationCache authenticationCache, 
-        IDateTimeProvider dateTimeProvider) {
+        IDateTimeProvider dateTimeProvider, 
+        ILogger<TooGoodToGoAuthenticator> logger) {
         
         _tooGoodToGoApiClient = tooGoodToGoApiClient;
         _authenticationCache = authenticationCache;
         _dateTimeProvider = dateTimeProvider;
+        _logger = logger;
     }
 
     public async Task<AuthenticationDto> Authenticate(string email) {
@@ -34,7 +39,14 @@ public class TooGoodToGoAuthenticator {
 
     private async Task<AuthenticationDto> RefreshTokenIfExpired(AuthenticationDto authenticationDto) {
         if (_dateTimeProvider.UtcNow() > authenticationDto.ValidUntilUtc) {
-            authenticationDto = await RefreshAccessToken(authenticationDto);
+            _logger.LogInformation("Token has expired, refreshing token");
+            try {
+                authenticationDto = await RefreshAccessToken(authenticationDto);
+            }
+            catch (TooGoodToGoApiException e) {
+                _logger.LogError(e, "Error while refreshing token. Clearing authentication cache");
+                await _authenticationCache.Clear();
+            }
         }
 
         return authenticationDto;
