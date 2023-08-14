@@ -52,9 +52,12 @@ public class SecretsManagerAuthenticationCacheTests {
         await sut.Persist(value);
 
         // Assert
-        secretsManager.Verify(x => x.SetSecret("Tgtg--UserId", value.UserId, null));
-        secretsManager.Verify(x => x.SetSecret("Tgtg--AccessToken", value.AccessToken, value.ValidUntilUtc));
-        secretsManager.Verify(x => x.SetSecret("Tgtg--RefreshToken", value.RefreshToken, null));
+        secretsManager.Verify(x => 
+            x.SetSecret("Tgtg--UserId", value.UserId, null), Times.Once);
+        secretsManager.Verify(x => 
+            x.SetSecret("Tgtg--AccessToken", value.AccessToken, value.ValidUntilUtc), Times.Once);
+        secretsManager.Verify(x => 
+            x.SetSecret("Tgtg--RefreshToken", value.RefreshToken, null), Times.Once);
     }
     
     [Fact]
@@ -67,9 +70,9 @@ public class SecretsManagerAuthenticationCacheTests {
         await sut.Clear();
 
         // Assert
-        secretsManager.Verify(x => x.RemoveSecret("Tgtg--UserId"));
-        secretsManager.Verify(x => x.RemoveSecret("Tgtg--AccessToken"));
-        secretsManager.Verify(x => x.RemoveSecret("Tgtg--RefreshToken"));
+        secretsManager.Verify(x => x.RemoveSecret("Tgtg--UserId"), Times.Once);
+        secretsManager.Verify(x => x.RemoveSecret("Tgtg--AccessToken"), Times.Once);
+        secretsManager.Verify(x => x.RemoveSecret("Tgtg--RefreshToken"), Times.Once);
     }
 
     private SecretDto CreateSecretDto(string name, string value) {
@@ -91,7 +94,7 @@ public class SecretsManagerAuthenticationCacheTests {
         };
     }
 
-    private SecretsManagerAuthenticationCache Sut(Mock<ISecretsManager> secretsManager = null) {
+    private SecretsManagerAuthenticationCache Sut(Mock<ISecretsManager>? secretsManager = null) {
         secretsManager ??= new Mock<ISecretsManager>();
         return new SecretsManagerAuthenticationCache(secretsManager.Object);
     }
