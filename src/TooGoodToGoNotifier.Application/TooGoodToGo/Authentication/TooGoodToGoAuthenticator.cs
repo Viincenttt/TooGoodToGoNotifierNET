@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using TooGoodToGoNotifier.Application.Common.Interfaces;
-using TooGoodToGoNotifier.Application.TooGoodToGo.Authentication.Cache;
 using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Request;
 using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Response;
 using TooGoodToGoNotifier.Domain.Exceptions;
@@ -29,6 +28,7 @@ public class TooGoodToGoAuthenticator {
         AuthenticationDto? authenticationDto = await _authenticationCache.Get();
         if (authenticationDto != null) {
             authenticationDto = await RefreshTokenIfExpired(authenticationDto);
+            await _authenticationCache.Persist(authenticationDto);
             return authenticationDto;
         }
 
