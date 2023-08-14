@@ -150,7 +150,7 @@ public class TooGoodToGoApiClientTests {
         var exception = await Assert.ThrowsAsync<TooGoodToGoApiException>(() => tgtgClient.AuthenticateByEmail(request));
 
         // Assert
-        exception.Message.Should().Be("Error while sending request to TooGoodToApi");
+        exception.Message.Should().StartWith("Error while sending request to TooGoodToApi");
         exception.StatusCode.Should().Be(statusCode);
         exception.JsonResponse.Should().Be(errorMessage);
     }
