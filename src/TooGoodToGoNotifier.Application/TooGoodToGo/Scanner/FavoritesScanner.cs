@@ -8,14 +8,14 @@ using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Response;
 namespace TooGoodToGoNotifier.Application.TooGoodToGo.Scanner; 
 
 public class FavoritesScanner {
-    private readonly TooGoodToGoAuthenticator _tooGoodToGoAuthenticator;
+    private readonly ITooGoodToGoAuthenticator _tooGoodToGoAuthenticator;
     private readonly ITooGoodToGoApiClient _tooGoodToGoApiClient;
     private readonly IFavoriteItemsCache _favoriteItemsCache;
     private readonly IEnumerable<INotifier> _notifiers;
     private readonly ILogger<FavoritesScanner> _logger;
 
     public FavoritesScanner(
-        TooGoodToGoAuthenticator tooGoodToGoAuthenticator, 
+        ITooGoodToGoAuthenticator tooGoodToGoAuthenticator, 
         ITooGoodToGoApiClient tooGoodToGoApiClient, 
         IFavoriteItemsCache favoriteItemsCache, 
         IEnumerable<INotifier> notifiers, 
@@ -29,7 +29,7 @@ public class FavoritesScanner {
     }
     
     public async Task ScanFavorites(string email, CancellationToken cancellationToken = default) {
-        AuthenticationDto authentication = await _tooGoodToGoAuthenticator.Authenticate(cancellationToken, email);
+        AuthenticationDto authentication = await _tooGoodToGoAuthenticator.Authenticate(email, cancellationToken);
         Dictionary<string, FavoriteItemDto> previousFavorites = await _favoriteItemsCache.Get();
         Dictionary<string, FavoriteItemDto> newFavorites = await GetFavoritesFromApi(authentication);
 

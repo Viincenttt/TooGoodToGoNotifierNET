@@ -11,7 +11,7 @@ namespace TooGoodToGoNotifier.Application;
 public static class DependencyInjection
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services) {
-        services.AddTransient<TooGoodToGoAuthenticator>();
+        services.AddTransient<ITooGoodToGoAuthenticator, TooGoodToGoAuthenticator>();
 
         services.AddTransient<IFavoriteItemsCache, InMemoryFavoriteItemsCache>();
         services.AddTransient<FavoritesScanner>();

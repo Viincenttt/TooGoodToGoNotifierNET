@@ -6,7 +6,7 @@ using TooGoodToGoNotifier.Domain.Exceptions;
 
 namespace TooGoodToGoNotifier.Application.TooGoodToGo.Authentication; 
 
-public class TooGoodToGoAuthenticator {
+public class TooGoodToGoAuthenticator : ITooGoodToGoAuthenticator {
     private readonly ITooGoodToGoApiClient _tooGoodToGoApiClient;
     private readonly IAuthenticationCache _authenticationCache;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -24,7 +24,7 @@ public class TooGoodToGoAuthenticator {
         _logger = logger;
     }
 
-    public async Task<AuthenticationDto> Authenticate(CancellationToken cancellationToken, string email) {
+    public async Task<AuthenticationDto> Authenticate(string email, CancellationToken cancellationToken = default) {
         AuthenticationDto? authenticationDto = await _authenticationCache.Get();
         if (authenticationDto != null) {
             authenticationDto = await RefreshTokenIfExpired(authenticationDto);

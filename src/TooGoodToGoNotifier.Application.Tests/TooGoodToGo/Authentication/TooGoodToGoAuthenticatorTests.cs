@@ -20,7 +20,7 @@ public class TooGoodToGoAuthenticatorTests {
         var sut = Sut(tgtgApi, authenticationCache);
 
         // Act
-        AuthenticationDto result = await sut.Authenticate(CancellationToken.None, "my-email");
+        AuthenticationDto result = await sut.Authenticate("my-email", CancellationToken.None);
 
         // Assert
         result.Should().BeEquivalentTo(cachedAuthentication);
@@ -46,7 +46,7 @@ public class TooGoodToGoAuthenticatorTests {
         var sut = Sut(tgtgApi, authenticationCache, dateTimeProvider);
 
         // Act
-        AuthenticationDto result = await sut.Authenticate(CancellationToken.None, "my-email");
+        AuthenticationDto result = await sut.Authenticate("my-email", CancellationToken.None);
 
         // Assert
         result.Should().BeEquivalentTo(refreshedAuthentication);
@@ -84,7 +84,7 @@ public class TooGoodToGoAuthenticatorTests {
         var sut = Sut(tgtgApi, authenticationCache);
         
         // Act
-        AuthenticationDto result = await sut.Authenticate(CancellationToken.None, email);
+        AuthenticationDto result = await sut.Authenticate(email, CancellationToken.None);
         
         // Assert
         result.UserId.Should().Be(authenticateByPollingResponse.StartupData.User.UserId);
