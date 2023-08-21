@@ -12,8 +12,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services) {
         services.AddTransient<ITooGoodToGoAuthenticator, TooGoodToGoAuthenticator>();
-
-        services.AddTransient<IFavoriteItemsCache, InMemoryFavoriteItemsCache>();
         services.AddTransient<FavoritesScanner>();
         
         services.Add(new ServiceDescriptor(typeof(INotifier), typeof(TelegramNotifier), ServiceLifetime.Transient));
@@ -21,14 +19,16 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddInMemoryAuthenticationCache(this IServiceCollection services) {
+    public static IServiceCollection AddInMemoryCache(this IServiceCollection services) {
         services.AddTransient<IAuthenticationCache, InMemoryAuthenticationCache>();
+        services.AddTransient<IAuthenticationCache, SecretsManagerAuthenticationCache>();
 
         return services;
     }
 
-    public static IServiceCollection AddSecretManagerAuthenticationCache(this IServiceCollection services) {
+    public static IServiceCollection AddCloudBasedCache(this IServiceCollection services) {
         services.AddTransient<IAuthenticationCache, SecretsManagerAuthenticationCache>();
+        services.AddTransient<IFavoriteItemsCache, CloudFavoriteItemCache>();
 
         return services;
     }

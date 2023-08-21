@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Hosting;
 using TooGoodToGoNotifier.Application;
 using TooGoodToGoNotifier.Infrastructure;
@@ -9,7 +8,6 @@ var host = new HostBuilder()
     .ConfigureServices((hostContext, services)  =>
     {
         services.AddInfrastructureServices(hostContext.Configuration);
-        services.AddSecretManagerAuthenticationCache();
         services.AddApplicationServices();
         services.AddFunctionAppServices(hostContext.Configuration);
     })
