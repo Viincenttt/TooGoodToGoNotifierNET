@@ -22,7 +22,8 @@ public class CloudFavoriteItemCache : IFavoriteItemsCache {
     }
 
     public async Task Persist(Dictionary<string, FavoriteItemDto> favoriteItems) {
+        var timeToCache = TimeSpan.FromMinutes(15);
         string cachedValue = JsonConvert.SerializeObject(favoriteItems.Values);
-        await _cloudKeyValueCacheProvider.Save(FavoriteItemsCacheKey, cachedValue);
+        await _cloudKeyValueCacheProvider.Save(FavoriteItemsCacheKey, cachedValue, timeToCache);
     }
 }
