@@ -63,24 +63,12 @@ public class FavoritesScanner {
     }
 
     private async Task<Dictionary<string, FavoriteItemDto>> GetFavoritesFromApi(AuthenticationDto authentication) {
-        try {
-            FavoritesItemsResponse response = await _tooGoodToGoApiClient.GetFavoritesItems(authentication.AccessToken,
-                new FavoritesItemsRequest {
-                    UserId = authentication.UserId
-                });
-            
-            return response.Items.ToDictionary(x => x.Item.ItemId, MapToFavoriteItemDto);
-        }
-        catch (TooGoodToGoApiException e) {
-            _logger.LogError(e, "Error while retrieving favorites StatusCode={statusCode}", e.StatusCode);
-            
-            if (e.StatusCode == HttpStatusCode.Forbidden) {
-                _logger.LogInformation("Refreshing access token due to forbidden error from TooGoodToGoApi");
-                await _tooGoodToGoAuthenticator.RefreshAccessToken(authentication);
-            }
-
-            throw;
-        }
+        FavoritesItemsResponse response = await _tooGoodToGoApiClient.GetFavoritesItems(authentication.AccessToken,
+            new FavoritesItemsRequest {
+                UserId = authentication.UserId
+            });
+        
+        return response.Items.ToDictionary(x => x.Item.ItemId, MapToFavoriteItemDto);
     }
 
     private FavoriteItemDto MapToFavoriteItemDto(FavoritesItemsResponse.ItemResponse item) {

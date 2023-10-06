@@ -27,37 +27,25 @@ public class TooGoodToGoAuthenticator : ITooGoodToGoAuthenticator {
     public async Task<AuthenticationDto> Authenticate(string email, CancellationToken cancellationToken = default) {
         AuthenticationDto? authenticationDto = await _authenticationCache.Get();
         if (authenticationDto != null) {
-            authenticationDto = await RefreshTokenIfExpired(authenticationDto);
+            authenticationDto = await RefreshAccessToken(authenticationDto);
+            await _authenticationCache.Persist(authenticationDto);
+            
+            return authenticationDto;
+        }
+        else {
+            authenticationDto = await RetrieveNewAuthenticationResult(cancellationToken, email);
             await _authenticationCache.Persist(authenticationDto);
             return authenticationDto;
         }
-
-        authenticationDto = await RetrieveNewAuthenticationResult(cancellationToken, email);
-        await _authenticationCache.Persist(authenticationDto);
-        return authenticationDto;
     }
 
-    public async Task RefreshAccessToken(AuthenticationDto authenticationDto) {
+    private async Task<AuthenticationDto> RefreshAccessToken(AuthenticationDto authenticationDto) {
         try {
             authenticationDto = await RefreshAccessTokenInternal(authenticationDto);
-            await _authenticationCache.Persist(authenticationDto);
         }
         catch (TooGoodToGoApiException e) {
             _logger.LogError(e, "Error while refreshing token. Clearing authentication cache");
             await _authenticationCache.Clear();
-        }
-    }
-
-    private async Task<AuthenticationDto> RefreshTokenIfExpired(AuthenticationDto authenticationDto) {
-        if (_dateTimeProvider.UtcNow() > authenticationDto.ValidUntilUtc) {
-            _logger.LogInformation("Token has expired, refreshing token");
-            try {
-                authenticationDto = await RefreshAccessTokenInternal(authenticationDto);
-            }
-            catch (TooGoodToGoApiException e) {
-                _logger.LogError(e, "Error while refreshing token. Clearing authentication cache");
-                await _authenticationCache.Clear();
-            }
         }
 
         return authenticationDto;
