@@ -15,7 +15,7 @@ public class FavoritesScannerFunction {
     }
 
     [Function("FavoritesScanner")]
-    public async Task RunAsync([TimerTrigger("*/1 * * * *")] TimerInfo myTimer) {
+    public async Task RunAsync([TimerTrigger("%FavoritesScannerTriggerTime%")] TimerInfo myTimer) {
         await _favoritesScanner.ScanFavorites(_options.Email);
     }
 }
