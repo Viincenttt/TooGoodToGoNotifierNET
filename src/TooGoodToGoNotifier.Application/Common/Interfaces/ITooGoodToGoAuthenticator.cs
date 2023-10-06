@@ -4,4 +4,5 @@ namespace TooGoodToGoNotifier.Application.Common.Interfaces;
 
 public interface ITooGoodToGoAuthenticator {
     Task<AuthenticationDto> Authenticate(string email, CancellationToken cancellationToken = default);
+    Task RefreshAccessToken(AuthenticationDto authenticationDto);
 }

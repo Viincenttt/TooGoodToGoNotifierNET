@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Net;
+using Microsoft.Extensions.Logging;
 using TooGoodToGoNotifier.Application.Common.Interfaces;
 using TooGoodToGoNotifier.Application.TooGoodToGo.Authentication;
 using TooGoodToGoNotifier.Application.TooGoodToGo.Scanner.Cache;
 using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Request;
 using TooGoodToGoNotifier.Domain.ApiModels.TooGoodToGo.Response;
+using TooGoodToGoNotifier.Domain.Exceptions;
 
 namespace TooGoodToGoNotifier.Application.TooGoodToGo.Scanner; 
 
@@ -61,11 +63,24 @@ public class FavoritesScanner {
     }
 
     private async Task<Dictionary<string, FavoriteItemDto>> GetFavoritesFromApi(AuthenticationDto authentication) {
-        FavoritesItemsResponse response = await _tooGoodToGoApiClient.GetFavoritesItems(authentication.AccessToken, new FavoritesItemsRequest {
-            UserId = authentication.UserId
-        });
+        try {
+            FavoritesItemsResponse response = await _tooGoodToGoApiClient.GetFavoritesItems(authentication.AccessToken,
+                new FavoritesItemsRequest {
+                    UserId = authentication.UserId
+                });
+            
+            return response.Items.ToDictionary(x => x.Item.ItemId, MapToFavoriteItemDto);
+        }
+        catch (TooGoodToGoApiException e) {
+            _logger.LogError(e, "Error while retrieving favorites StatusCode={statusCode}", e.StatusCode);
+            
+            if (e.StatusCode == HttpStatusCode.Forbidden) {
+                _logger.LogInformation("Refreshing access token due to forbidden error from TooGoodToGoApi");
+                await _tooGoodToGoAuthenticator.RefreshAccessToken(authentication);
+            }
 
-        return response.Items.ToDictionary(x => x.Item.ItemId, MapToFavoriteItemDto);
+            throw;
+        }
     }
 
     private FavoriteItemDto MapToFavoriteItemDto(FavoritesItemsResponse.ItemResponse item) {

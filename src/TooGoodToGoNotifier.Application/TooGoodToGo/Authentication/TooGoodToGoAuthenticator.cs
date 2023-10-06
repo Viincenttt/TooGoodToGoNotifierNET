@@ -37,11 +37,22 @@ public class TooGoodToGoAuthenticator : ITooGoodToGoAuthenticator {
         return authenticationDto;
     }
 
+    public async Task RefreshAccessToken(AuthenticationDto authenticationDto) {
+        try {
+            authenticationDto = await RefreshAccessTokenInternal(authenticationDto);
+            await _authenticationCache.Persist(authenticationDto);
+        }
+        catch (TooGoodToGoApiException e) {
+            _logger.LogError(e, "Error while refreshing token. Clearing authentication cache");
+            await _authenticationCache.Clear();
+        }
+    }
+
     private async Task<AuthenticationDto> RefreshTokenIfExpired(AuthenticationDto authenticationDto) {
         if (_dateTimeProvider.UtcNow() > authenticationDto.ValidUntilUtc) {
             _logger.LogInformation("Token has expired, refreshing token");
             try {
-                authenticationDto = await RefreshAccessToken(authenticationDto);
+                authenticationDto = await RefreshAccessTokenInternal(authenticationDto);
             }
             catch (TooGoodToGoApiException e) {
                 _logger.LogError(e, "Error while refreshing token. Clearing authentication cache");
@@ -52,7 +63,7 @@ public class TooGoodToGoAuthenticator : ITooGoodToGoAuthenticator {
         return authenticationDto;
     }
     
-    private async Task<AuthenticationDto> RefreshAccessToken(AuthenticationDto authenticationDto) {
+    private async Task<AuthenticationDto> RefreshAccessTokenInternal(AuthenticationDto authenticationDto) {
         var request = new RefreshAccessTokenRequest {
             RefreshToken = authenticationDto.RefreshToken
         };
