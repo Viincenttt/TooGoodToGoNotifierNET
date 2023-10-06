@@ -17,9 +17,10 @@ public class BlobStorageCacheProvider : ICloudKeyValueCacheProvider {
 
     public async Task Save(string key, string value, TimeSpan? expiry = null) {
         var containerClient = _blobServiceClient.GetBlobContainerClient(_configuration.Container);
+        BlobClient blobClient = containerClient.GetBlobClient(_configuration.Blob);
         var content = Encoding.UTF8.GetBytes(value);
         using var ms = new MemoryStream(content);
-        await containerClient.UploadBlobAsync(_configuration.Blob, ms);
+        await blobClient.UploadAsync(ms, overwrite: true);
     }
 
     public async Task<string?> Get(string key) {
