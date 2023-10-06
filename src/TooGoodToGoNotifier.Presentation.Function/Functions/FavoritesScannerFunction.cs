@@ -15,6 +15,7 @@ public class FavoritesScannerFunction {
     }
 
     [Function("FavoritesScanner")]
+    [ExponentialBackoffRetry(3, "00:00:45", "00:03:00")]
     public async Task RunAsync([TimerTrigger("%FavoritesScannerTriggerTime%")] TimerInfo myTimer) {
         await _favoritesScanner.ScanFavorites(_options.Email);
     }
