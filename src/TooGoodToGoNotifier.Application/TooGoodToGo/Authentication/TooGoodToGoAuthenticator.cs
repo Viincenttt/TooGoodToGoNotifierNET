@@ -79,7 +79,9 @@ public class TooGoodToGoAuthenticator : ITooGoodToGoAuthenticator {
     }
 
     private async Task<AuthenticationDto> PollForAuthenticationResult(CancellationToken cancellationToken, string email, string pollingId) {
-        while (true) {
+        const int maxRetries = 3;
+        int retryCount = 0;
+        while (retryCount < maxRetries) {
             cancellationToken.ThrowIfCancellationRequested();
             
             var request = new AuthenticateByPollingIdRequest {
@@ -96,8 +98,11 @@ public class TooGoodToGoAuthenticator : ITooGoodToGoAuthenticator {
                     CreatedOnUtc = _dateTimeProvider.UtcNow()
                 };
             }
-            
+
+            retryCount++;
             await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
         }
+
+        throw new TimeoutException("Polling e-mail was not opened in time");
     }
 }
