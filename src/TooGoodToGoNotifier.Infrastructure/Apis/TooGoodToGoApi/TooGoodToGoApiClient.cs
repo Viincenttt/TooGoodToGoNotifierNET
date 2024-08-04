@@ -62,7 +62,7 @@ public class TooGoodToGoApiClient : ITooGoodToGoApiClient {
     private HttpRequestMessage CreateHttpRequest(HttpMethod method, string relativeUri, object? data, string? accessToken = null) {
         HttpRequestMessage httpRequest = new HttpRequestMessage(method, new Uri(new Uri(ApiBaseUrl), relativeUri));
         httpRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        httpRequest.Headers.TryAddWithoutValidation("user-agent", "TGTG/23.7.12 Dalvik/2.1.0 (Linux; U; Android 9; AFTKA Build/PS7285.2877N");
+        httpRequest.Headers.TryAddWithoutValidation("user-agent", "TGTG/24.7.3 Dalvik/2.1.0 (Linux; U; Android 9; AFTKA Build/PS7285.2877N");
         httpRequest.Headers.Add("accept-language", "en-UK");
         if (!string.IsNullOrEmpty(accessToken)) {
             httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
