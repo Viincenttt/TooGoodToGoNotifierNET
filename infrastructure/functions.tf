@@ -47,4 +47,8 @@ resource "azurerm_windows_function_app" "tgtg_notifier_function" {
     Notifications__Telegram__BotToken = "todo"
     TooGoodToGo__Email = var.tgtg_user_email
   }
+
+  identity {
+    type = "SystemAssigned"
+  }
 }
