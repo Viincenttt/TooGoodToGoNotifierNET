@@ -1,5 +1,13 @@
 ﻿resource "azurerm_storage_account" "tgtg_notifier_function_storage" {
-  name                     = "storagetgtgnotifier${var.environment}"
+  name                     = "stortgtgnotifier${var.environment}"
+  resource_group_name      = azurerm_resource_group.tgtg_rg.name
+  location                 = var.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_account" "tgtg_notifier_itemcache_storage" {
+  name                     = "storegtgnotifiercache${var.environment}"
   resource_group_name      = azurerm_resource_group.tgtg_rg.name
   location                 = var.location
   account_tier             = "Standard"
@@ -27,5 +35,16 @@ resource "azurerm_windows_function_app" "tgtg_notifier_function" {
       dotnet_version              = "v7.0"
       use_dotnet_isolated_runtime = true
     }
+  }
+
+  app_settings = {
+    BlobStorageCache__Blob = "items-cache.json"
+    BlobStorageCache__Container = "toogoodtogoitemcache"
+    BlobStorageCache__Uri = azurerm_storage_account.tgtg_notifier_itemcache_storage.primary_blob_endpoint
+    FavoritesScannerTriggerTime = "0 */5 7-20 * * *"
+    KeyvaultUri = "todo"
+    Notifications__Telegram__ChatId = var.telegram_chat_id
+    Notifications__Telegram__BotToken = "todo"
+    TooGoodToGo__Email = var.tgtg_user_email
   }
 }
