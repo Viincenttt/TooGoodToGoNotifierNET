@@ -56,7 +56,7 @@ resource "azurerm_windows_function_app" "tgtg_notifier_function" {
     FavoritesScannerTriggerTime = "0 */5 7-20 * * *"
     KeyvaultUri = azurerm_key_vault.tgtg_notifier_keyvault.vault_uri
     Notifications__Telegram__ChatId = var.telegram_chat_id
-    Notifications__Telegram__BotToken = "todo"
+    Notifications__Telegram__BotToken = var.telegram_bot_token
     TooGoodToGo__Email = var.tgtg_user_email
   }
 

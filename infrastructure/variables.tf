@@ -16,9 +16,17 @@ variable "location" {
 variable "telegram_chat_id" {
   type    = string
   description = "The telegram chat id to send messages to"
+  sensitive   = true
+}
+
+variable "telegram_bot_token" {
+  type    = string
+  description = "The telegram bot token"
+  sensitive   = true
 }
 
 variable "tgtg_user_email" {
   type    = string
   description = "The e-mail address of your tgtg account"
+  sensitive   = true
 }
