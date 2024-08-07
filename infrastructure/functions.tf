@@ -22,6 +22,18 @@ resource "azurerm_service_plan" "tgtg_notifier_function_service_plan" {
   sku_name            = "Y1"
 }
 
+resource "azurerm_role_assignment" "tgtg_notifier_function_cache_role_assignment" {
+  scope                = azurerm_storage_account.tgtg_notifier_itemcache_storage.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_windows_function_app.tgtg_notifier_function.identity[0].principal_id
+}
+
+resource "azurerm_role_assignment" "tgtg_notifier_function_keyvault_role_assignment" {
+  scope                = azurerm_key_vault.tgtg_notifier_keyvault.id
+  role_definition_name = "Key Vault Administrator"
+  principal_id         = azurerm_windows_function_app.tgtg_notifier_function.identity[0].principal_id
+}
+
 resource "azurerm_windows_function_app" "tgtg_notifier_function" {
   name                       = "func-tgtgnotifier-app-${var.environment}"
   location                   = var.location
@@ -42,7 +54,7 @@ resource "azurerm_windows_function_app" "tgtg_notifier_function" {
     BlobStorageCache__Container = "toogoodtogoitemcache"
     BlobStorageCache__Uri = azurerm_storage_account.tgtg_notifier_itemcache_storage.primary_blob_endpoint
     FavoritesScannerTriggerTime = "0 */5 7-20 * * *"
-    KeyvaultUri = "todo"
+    KeyvaultUri = azurerm_key_vault.tgtg_notifier_keyvault.vault_uri
     Notifications__Telegram__ChatId = var.telegram_chat_id
     Notifications__Telegram__BotToken = "todo"
     TooGoodToGo__Email = var.tgtg_user_email
